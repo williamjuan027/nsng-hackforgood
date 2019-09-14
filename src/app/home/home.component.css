@@ -1,0 +1,55 @@
+.header {
+  background-color: #5F20D3;
+  border-bottom-right-radius: 70;
+  padding: 0 30;
+}
+
+.lbl-name {
+  color: #fff;
+  font-size: 25;
+  vertical-align: bottom;
+}
+
+.lbl-id {
+  color: #fff;
+  font-size: 15;
+  opacity: 0.6;
+  vertical-align: top;
+}
+
+.img-profile {
+  height: 80;
+  width: 80;
+  border-radius: 40;
+  vertical-align: middle;
+}
+
+.body {
+  padding: 20;
+}
+
+.content-head {
+  color: #000;
+  font-size: 30;
+  text-wrap: true;
+}
+
+.content-body {
+  color: #000;
+  font-size: 15;
+  opacity: 0.6;
+}
+
+.content-break {
+  border-bottom-width: 1px;
+  border-bottom-color: #000;
+  opacity: 0.3;
+  margin-bottom: 15;
+}
+
+.content-card {
+  border-radius: 10;
+  padding: 10;
+  background-color: #ddd;
+  margin: 5 0;
+}

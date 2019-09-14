@@ -32,7 +32,8 @@
     "@angular/compiler-cli": "~8.0.0",
     "@ngtools/webpack": "~8.0.0",
     "nativescript-dev-typescript": "~0.10.0",
-    "nativescript-dev-webpack": "~0.24.0"
+    "nativescript-dev-webpack": "~0.24.0",
+    "tns-platform-declarations": "^6.1.1"
   },
   "gitHead": "8c1a4866a66daab09bf5ef8e5a96472687192373",
   "readme": "NativeScript Application"

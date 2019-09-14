@@ -1,0 +1,32 @@
+<!-- <ns-sidebar>
+  <Label text="parent" (tap)="test()"></Label>
+</ns-sidebar> -->
+
+<GridLayout rows="*, 3*">
+  <GridLayout row="0" class="header" rows="*, auto, auto, * auto" columns="*, auto">
+    <Label row="1" col="0" text="John Doe" class="lbl-name"></Label>
+    <Label row="2" col="0" text="ID: 1295321" class="lbl-id"></Label>
+    <Image row="1" rowSpan="2" col="1" src="~/app/assets/images/profile.png" class="img-profile"></Image>
+
+  </GridLayout>
+
+  <ScrollView row="1" orientation="vertical">
+    <StackLayout class="body">
+      <Label text="Lorem Ipsum dea asdfnja asdlke djajksjk" class="content-head"></Label>
+      <Label text="Last Updated: 30 min" class="content-update"></Label>
+      <Label text=" " class="content-break"></Label>
+
+      <GridLayout class="content-card">
+        <Label text="Physical Activity"></Label>
+      </GridLayout>
+      <GridLayout class="content-card">
+        <Label text="Physical Activity"></Label>
+      </GridLayout>
+      <GridLayout class="content-card">
+        <Label text="Physical Activity"></Label>
+      </GridLayout>
+
+    </StackLayout>
+  </ScrollView>
+
+</GridLayout>
