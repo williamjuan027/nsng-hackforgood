@@ -10,3 +10,23 @@ of writing your own CSS rules. For a full list of class names in the theme
 refer to http://docs.nativescript.org/ui/theme.
 */
 @import '~nativescript-theme-core/css/core.light.css';
+
+.extra-bold {
+    font-family: "Assistant-ExtraBold","Assistant ExtraBold";
+    font-weight: 800;
+}
+
+.bold {
+    font-family: "Assistant-Bold","Assistant";
+    font-weight: 700;
+}
+
+.semi-bold {
+    font-family: "Assistant-SemiBold","Assistant SemiBold";
+    font-weight: 600;
+}
+
+.regular {
+    font-family: "Assistant-Regular","Assistant Regular";
+    font-weight: 400;
+}

@@ -24,6 +24,19 @@
   vertical-align: middle;
 }
 
+.day-selector > Label {
+  color: #fff;
+  text-align: center;
+  font-size: 15;
+  margin-bottom: 10;
+}
+
+.day-selector > Image {
+  height: 10;
+  vertical-align: bottom;
+  margin-bottom: -2;
+}
+
 .body {
   padding: 20;
 }
@@ -52,4 +65,26 @@
   padding: 10;
   background-color: #ddd;
   margin: 5 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 150;
+}
+
+.content-card.activity {
+  background-image: url('~/app/assets/images/run.png');
+}
+
+.content-card.diet {
+  background-image: url('~/app/assets/images/diet.png');
+}
+
+.content-card.medication {
+  background-image: url('~/app/assets/images/med.png');
+}
+
+.content-card > Label {
+  color: #5F20D3;
+  font-size: 20;
+  vertical-align: top;
 }
