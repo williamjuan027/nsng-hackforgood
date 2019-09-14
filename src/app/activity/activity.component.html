@@ -1,0 +1,22 @@
+<GridLayout rows="*, 100, 2*" backgroundColor="gray">
+  <StackLayout row="0" rowSpan="2" padding="10">
+    <Image src="~/app/assets/images/backarrow.png" class="back-arrow" (tap)="back()"></Image>
+  </StackLayout>
+  <StackLayout row="1" rowSpan="2" class="container">
+    <Label text="Physical Activity" class="content-head bold"></Label>
+    <Label text="What you did today?" class="content-update regular"></Label>
+    <Label text=" " class="content-break"></Label>
+
+    <GridLayout rows="auto, 10, auto, 10, auto" columns="*, 10, *">
+
+      <GridLayout row="4" col="0" class="btn-cancel" (tap)="back()">
+        <Label text="CANCEL" class="bold"></Label>
+      </GridLayout>
+      <GridLayout row="4" col="2" class="btn-save">
+        <Label text="SAVE" class="bold"></Label>
+      </GridLayout>
+    </GridLayout>
+
+  </StackLayout>
+
+</GridLayout>

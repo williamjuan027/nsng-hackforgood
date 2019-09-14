@@ -8,6 +8,7 @@ import { AppComponent } from "./app.component";
 import { SidebarModule } from "./shared/ui/sidebar/sidebar.module";
 
 import { HomeComponent } from "./home/home.component";
+import { ActivityComponent } from "./activity/activity.component";
 
 // Uncomment and add to NgModule imports if you need to use the HttpClient wrapper
 // import { NativeScriptHttpClientModule } from "nativescript-angular/http-client";
@@ -24,7 +25,8 @@ import { HomeComponent } from "./home/home.component";
     ],
     declarations: [
         AppComponent,
-        HomeComponent
+        HomeComponent,
+        ActivityComponent
     ],
     providers: [],
     schemas: [

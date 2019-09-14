@@ -1,5 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from "@angular/core";
-import { screen } from "tns-core-modules/platform/platform"
+import { RouterExtensions } from "nativescript-angular/router";
+import { Page } from "tns-core-modules/ui/page";
+import { screen } from "tns-core-modules/platform/platform";
 
 @Component({
     selector: "ns-home",
@@ -11,11 +13,21 @@ export class HomeComponent implements AfterViewInit {
 
   public viewHeight: number = screen.mainScreen.heightDIPs;
 
-  constructor() {
+  @ViewChild('arrow', { static: true }) arrow: ElementRef;
+
+  constructor(
+    private routerExtensions: RouterExtensions,
+    private page: Page
+  ) {
+    this.page.actionBarHidden = true;
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
+    this.arrow.nativeElement.translateX = screen.mainScreen.widthDIPs / 10;
+  }
 
+  navigateToActivity(): void {
+    this.routerExtensions.navigate(['/activity']);
   }
 
   test() {
