@@ -38,10 +38,12 @@ class CADisplayLinkTargetHandler extends NSObject {
 })
 export class SidebarComponent implements OnChanges, AfterViewInit {
 
-  nativeWidth: number = 500;
-  minHeight = 70;
-  maxWaveHeight = 100;
+  nativeWidth: number = 800;
+  minWidth = 20;
+  maxWaveHeight = 50;
   _shapeLayer;
+
+  public isOpen: boolean = false;
 
   private animating: boolean = false;
 
@@ -61,7 +63,6 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes', changes);
   }
 
   ngAfterViewInit() {
@@ -70,12 +71,12 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   onPan(args: PanGestureEventData): void {
     if (args.state === 2) {
       // finger moving
-      let additionalHeight = Math.max(args.ios.translationInView(args.ios.view).y, 0);
-      let waveHeight = Math.min(additionalHeight * 0.6, this.maxWaveHeight);
-      let baseHeight = 50 + additionalHeight - waveHeight;
+      let additionalWidth = Math.max(args.ios.translationInView(args.ios.view).x, 0);
+      let waveHeight = Math.min(additionalWidth * 0.6, this.maxWaveHeight);
+      let baseWidth = this.minWidth + additionalWidth - waveHeight;
 
-      let posX = args.ios.locationInView(args.ios.view).x
-      this.layoutControlPoints(baseHeight, waveHeight, posX);
+      let posY = args.ios.locationInView(args.ios.view).y
+      this.layoutControlPoints(baseWidth, waveHeight, posY);
 
       this._updateShapeLayer();
     } else if (args.state === 3) {
@@ -83,16 +84,18 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
       UIView.animateWithDurationDelayUsingSpringWithDampingInitialSpringVelocityOptionsAnimationsCompletion(0.9, 0.0, 0.57, 0.0, [], () => {
         this.animating = true;
         this.displayLink.paused = false;
-        this.l1ControlPointView.center = CGPointMake(this.l1ControlPointView.center.x, this.minHeight + 100);
-        this.l2ControlPointView.center = CGPointMake(this.l2ControlPointView.center.x, this.minHeight + 100);
-        this.l3ControlPointView.center = CGPointMake(this.l3ControlPointView.center.x, this.minHeight + 100);
-        this.cControlPointView.center = CGPointMake(this.cControlPointView.center.x, this.minHeight + 100);
-        this.r1ControlPointView.center = CGPointMake(this.r1ControlPointView.center.x, this.minHeight + 100);
-        this.r2ControlPointView.center = CGPointMake(this.r2ControlPointView.center.x, this.minHeight + 100);
-        this.r3ControlPointView.center = CGPointMake(this.r3ControlPointView.center.x, this.minHeight + 100);
+        this.minWidth = this.isOpen ? this.minWidth - 100 : this.minWidth + 100;
+        this.l1ControlPointView.center = CGPointMake(this.minWidth, this.l1ControlPointView.center.y);
+        this.l2ControlPointView.center = CGPointMake(this.minWidth, this.l2ControlPointView.center.y);
+        this.l3ControlPointView.center = CGPointMake(this.minWidth, this.l3ControlPointView.center.y);
+        this.cControlPointView.center = CGPointMake(this.minWidth, this.cControlPointView.center.y);
+        this.r1ControlPointView.center = CGPointMake(this.minWidth, this.r1ControlPointView.center.y);
+        this.r2ControlPointView.center = CGPointMake(this.minWidth, this.r2ControlPointView.center.y);
+        this.r3ControlPointView.center = CGPointMake(this.minWidth, this.r3ControlPointView.center.y);
       }, () => {
         this.animating = false;
         this.displayLink.paused = true;
+        this.isOpen = !this.isOpen;
       });
     }
   }
@@ -101,8 +104,6 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     let nativeView;
     if (isIOS) {
       nativeView = UIView.new();
-
-      // nativeView.frame = CGRectMake(0, 0, 200, 200);     // TODO: check if this is used, remove if not used
 
       this._shapeLayer = new CAShapeLayer();
 
@@ -118,15 +119,6 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
       this.r2ControlPointView.frame = CGRectMake(0, 0, 3, 3);
       this.r3ControlPointView.frame = CGRectMake(0, 0, 3, 3);
 
-      // used to debug control points
-      // this.l3ControlPointView.backgroundColor = UIColor.redColor
-      // this.l2ControlPointView.backgroundColor = UIColor.redColor
-      // this.l1ControlPointView.backgroundColor = UIColor.redColor
-      // this.cControlPointView.backgroundColor = UIColor.redColor
-      // this.r1ControlPointView.backgroundColor = UIColor.redColor
-      // this.r2ControlPointView.backgroundColor = UIColor.redColor
-      // this.r3ControlPointView.backgroundColor = UIColor.redColor
-
       nativeView.addSubview(this.l3ControlPointView)
       nativeView.addSubview(this.l2ControlPointView)
       nativeView.addSubview(this.l1ControlPointView)
@@ -135,7 +127,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
       nativeView.addSubview(this.r2ControlPointView)
       nativeView.addSubview(this.r3ControlPointView)
 
-      this.layoutControlPoints(this.minHeight, 0, this.nativeWidth / 2);
+      this.layoutControlPoints(this.minWidth, 0, this.height / 2);
 
       // --------------------------------------------------------------------------------------------------------------
       // ObjC stuff
@@ -156,22 +148,23 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     event.view = nativeView;
   }
 
-  layoutControlPoints(baseHeight: number, waveHeight: number, locationX: number): void {
-    const width = this.nativeWidth;
-    const minLeftX = Math.min((locationX - width / 2) * 0.28, 0);
-    const maxRightX = Math.max(width + (locationX - width / 2) * 0.28);
+  layoutControlPoints(baseWidth: number, waveHeight: number, locationY: number): void {
+    // const width = this.nativeWidth;
+    const height = this.height + 40;
+    const minTopY = Math.min((locationY - height / 2) * 0.28, 0);
+    const maxBottomY = Math.max(height + (locationY - height / 2) * 0.28);
 
-    const leftPartWidth = locationX - minLeftX;
-    const rightPartWidth = maxRightX - locationX;
+    const leftPartWidth = locationY - minTopY;
+    const rightPartWidth = maxBottomY - locationY;
 
-    this.l3ControlPointView.center = CGPointMake(minLeftX, baseHeight);
-    this.l2ControlPointView.center = CGPointMake(minLeftX + leftPartWidth * 0.44, baseHeight);
-    this.l1ControlPointView.center = CGPointMake(minLeftX + leftPartWidth * 0.71, baseHeight + waveHeight * 0.64);
+    this.l3ControlPointView.center = CGPointMake(baseWidth, minTopY);
+    this.l2ControlPointView.center = CGPointMake(baseWidth, minTopY + leftPartWidth * 0.44);
+    this.l1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, minTopY + leftPartWidth * 0.71);
 
-    this.cControlPointView.center = CGPointMake(locationX, baseHeight + waveHeight * 1.36);
-    this.r1ControlPointView.center = CGPointMake(maxRightX - rightPartWidth * 0.71, baseHeight + waveHeight * 0.64);
-    this.r2ControlPointView.center = CGPointMake(maxRightX - (rightPartWidth * 0.44), baseHeight);
-    this.r3ControlPointView.center = CGPointMake(maxRightX, baseHeight);
+    this.cControlPointView.center = CGPointMake(baseWidth + waveHeight * 1.36, locationY);
+    this.r1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, maxBottomY - rightPartWidth * 0.71);
+    this.r2ControlPointView.center = CGPointMake(baseWidth, maxBottomY - (rightPartWidth * 0.44));
+    this.r3ControlPointView.center = CGPointMake(baseWidth, maxBottomY);
   }
 
   public _updateShapeLayer(): void {
@@ -182,7 +175,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     let bezierPath = UIBezierPath.bezierPath();
     bezierPath.moveToPoint(CGPointMake(0, 0))
 
-    bezierPath.addLineToPoint(CGPointMake(0, this.getPosition(this.l3ControlPointView).y));
+    bezierPath.addLineToPoint(CGPointMake(this.getPosition(this.l3ControlPointView).x, 0));
     bezierPath.addCurveToPointControlPoint1ControlPoint2(
       this.getPosition(this.l1ControlPointView),
       this.getPosition(this.l3ControlPointView),
@@ -198,7 +191,8 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
       this.getPosition(this.r1ControlPointView),
       this.getPosition(this.r2ControlPointView)
     );
-    bezierPath.addLineToPoint(CGPointMake(this.nativeWidth, 0));
+
+    bezierPath.addLineToPoint(CGPointMake(0, this.height));
 
     bezierPath.closePath();
     return bezierPath.CGPath;

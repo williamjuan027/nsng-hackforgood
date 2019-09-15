@@ -13,17 +13,17 @@ export class HomeComponent implements AfterViewInit {
 
   public viewHeight: number = screen.mainScreen.heightDIPs;
 
-  @ViewChild('arrow', { static: true }) arrow: ElementRef;
+  // @ViewChild('arrow', { static: true }) arrow: ElementRef;
 
   constructor(
     private routerExtensions: RouterExtensions,
     private page: Page
   ) {
-    this.page.actionBarHidden = true;
+    // this.page.actionBarHidden = true;
   }
 
   ngAfterViewInit(): void {
-    this.arrow.nativeElement.translateX = screen.mainScreen.widthDIPs / 10;
+    // this.arrow.nativeElement.translateX = screen.mainScreen.widthDIPs / 10;
   }
 
   navigateToActivity(): void {
