@@ -16,7 +16,7 @@
 
     <ScrollView row="1" orientation="vertical" (scroll)="onScroll($event)" [isScrollEnabled]="!isPanning && !isOpen">
       <StackLayout class="body">
-        <Label text="Lorem Ipsum dea asdfnja asdlke djajksjk" class="content-head bold"></Label>
+        <Label text="Track your activity today" class="content-head bold"></Label>
         <Label text="Last Updated: 30 min" class="content-update regular"></Label>
         <Label text=" " class="content-break"></Label>
 
@@ -37,9 +37,20 @@
 
   <Placeholder isUserInteractionEnabled="false" (creatingView)="onCreatingView($event)"></Placeholder>
   <GridLayout *ngIf="isOpen && !isPanning" [@listAnimation] isUserInteractionEnabled="false" rows="*, *, *, *, *" columns="120">
-    <GridLayout *ngIf="true" row="0" col="0" backgroundColor="yellow"></GridLayout>
-    <GridLayout *ngIf="true" row="1" col="0" backgroundColor="blue"></GridLayout>
-    <GridLayout *ngIf="true" row="2" col="0" backgroundColor="green"></GridLayout>
-    <GridLayout *ngIf="true" row="3" col="0" backgroundColor="red"></GridLayout>
+    <GridLayout *ngIf="true" row="0" col="0" class="menu-item">
+      <Label class="bold highlight" text="HOME"></Label>
+    </GridLayout>
+    <GridLayout *ngIf="true" row="1" col="0" class="menu-item">
+      <Label class="bold" text="ACCOUNT"></Label>
+    </GridLayout>
+    <GridLayout *ngIf="true" row="2" col="0" class="menu-item">
+      <Label class="bold" text="SETTINGS"></Label>
+    </GridLayout>
+    <GridLayout *ngIf="true" row="3" col="0" class="menu-item">
+      <Label class="bold" text="ABOUT"></Label>
+    </GridLayout>
+    <GridLayout *ngIf="true" row="4" col="0" class="menu-item">
+      <Label class="bold" text="SIGN OUT"></Label>
+    </GridLayout>
   </GridLayout>
 </GridLayout>

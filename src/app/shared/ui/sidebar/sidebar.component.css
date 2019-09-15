@@ -72,3 +72,15 @@
   font-size: 20;
   vertical-align: top;
 }
+
+.menu-item > Label {
+  color: #fff;
+  font-size: 18;
+  vertical-align: center;
+  horizontal-align: center;
+  opacity: 0.5;
+}
+
+.menu-item > Label.highlight {
+  opacity: 1;
+}

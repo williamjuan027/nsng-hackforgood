@@ -4,6 +4,9 @@ import { isIOS, isAndroid } from "tns-core-modules/platform";
 import { CreateViewEventData } from "tns-core-modules/ui/placeholder";
 import { GestureTypes, PanGestureEventData } from "tns-core-modules/ui/gestures";
 import { animate, state, query, stagger, style, transition, trigger } from "@angular/animations";
+import { RouterExtensions } from "nativescript-angular/router";
+import { Page } from "tns-core-modules/ui/page";
+import { screen } from "tns-core-modules/platform/platform";
 
 declare const CAShapeLayer;
 declare const UIView;
@@ -88,15 +91,21 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   isScrolling: boolean = false;
   isPanning: boolean = false;
 
+  @ViewChild('arrow', { static: true }) arrow: ElementRef;
+
   constructor(
+    private routerExtensions: RouterExtensions,
+    private page: Page,
     private cd: ChangeDetectorRef
   ) {
+    this.page.actionBarHidden = true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterViewInit() {
+    this.arrow.nativeElement.translateX = <any>screen.mainScreen.widthDIPs / 10;
   }
 
   onPan(args: PanGestureEventData): void {
@@ -188,7 +197,6 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   layoutControlPoints(baseWidth: number, waveHeight: number, locationY: number): void {
     // const width = this.nativeWidth;
     const height = this.height + 40;
-    locationY = locationY - 130;
     const minTopY = Math.min((locationY - height / 2) * 0.28, 0);
     const maxBottomY = Math.max(height + (locationY - height / 2) * 0.28);
 
@@ -211,9 +219,9 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
 
   currentPath() {
     let bezierPath = UIBezierPath.bezierPath();
-    bezierPath.moveToPoint(CGPointMake(0, -30))
+    bezierPath.moveToPoint(CGPointMake(0, -50))
 
-    bezierPath.addLineToPoint(CGPointMake(this.getPosition(this.l3ControlPointView).x, -30));
+    bezierPath.addLineToPoint(CGPointMake(this.getPosition(this.l3ControlPointView).x, -50));
     bezierPath.addCurveToPointControlPoint1ControlPoint2(
       this.getPosition(this.l1ControlPointView),
       this.getPosition(this.l3ControlPointView),
@@ -249,5 +257,8 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     }, 300);
   }
 
+  navigateToActivity(): void {
+    this.routerExtensions.navigate(['/activity']);
+  }
 
 }
