@@ -1,8 +1,9 @@
-import { Component, OnChanges, AfterViewInit, SimpleChanges, Input, Output, EventEmitter, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnChanges, AfterViewInit, SimpleChanges, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef } from "@angular/core";
 import { Color } from 'tns-core-modules/color';
 import { isIOS, isAndroid } from "tns-core-modules/platform";
 import { CreateViewEventData } from "tns-core-modules/ui/placeholder";
 import { GestureTypes, PanGestureEventData } from "tns-core-modules/ui/gestures";
+import { animate, state, query, stagger, style, transition, trigger } from "@angular/animations";
 
 declare const CAShapeLayer;
 declare const UIView;
@@ -34,18 +35,43 @@ class CADisplayLinkTargetHandler extends NSObject {
   selector: "ns-sidebar",
   moduleId: module.id,
   templateUrl: "./sidebar.component.html",
-  styleUrls: ["./sidebar.component.css"]
+  styleUrls: ["./sidebar.component.css"],
+  animations: [
+    trigger("state", [
+      state("in", style({
+        opacity: 1,
+        transform: "translate(0)"
+      })),
+      state("void", style({
+        opacity: 0,
+        transform: "translate(-50, 0)"
+      })),
+      transition("void => *", [animate("200ms ease-out")]),
+      transition("* => void", [animate("200ms ease-out")])
+    ]),
+    trigger("listAnimation", [
+      transition("* => *", [
+        // this hides everything right away
+        query(":enter", style({opacity: 0, transform: "translate(-50, 0)"}), { optional: true }),
+
+        // starts to animate things with a stagger in between
+        query(":enter", stagger(150, [
+          animate(300, style({opacity: 1, transform: "translate(0)"}))
+        ]), { delay: 100, optional: true })
+      ])
+    ])
+  ]
 })
 export class SidebarComponent implements OnChanges, AfterViewInit {
 
   nativeWidth: number = 800;
   minWidth = 20;
-  maxWaveHeight = 50;
+  maxWaveHeight = 100;
   _shapeLayer;
 
   public isOpen: boolean = false;
 
-  private animating: boolean = false;
+  public animating: boolean = false;
 
   private displayLink: CADisplayLink;
 
@@ -59,7 +85,12 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
 
   @Input('height') height: number;
 
-  constructor() {
+  isScrolling: boolean = false;
+  isPanning: boolean = false;
+
+  constructor(
+    private cd: ChangeDetectorRef
+  ) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,13 +100,17 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   }
 
   onPan(args: PanGestureEventData): void {
+    if (this.isScrolling || this.animating || Math.abs(args.deltaY) > Math.abs(args.deltaX / 2)) {
+      return;
+    }
     if (args.state === 2) {
+      this.isPanning = true;
       // finger moving
       let additionalWidth = Math.max(args.ios.translationInView(args.ios.view).x, 0);
       let waveHeight = Math.min(additionalWidth * 0.6, this.maxWaveHeight);
       let baseWidth = this.minWidth + additionalWidth - waveHeight;
 
-      let posY = args.ios.locationInView(args.ios.view).y
+      let posY = args.ios.locationInView(args.ios.view).y;
       this.layoutControlPoints(baseWidth, waveHeight, posY);
 
       this._updateShapeLayer();
@@ -93,9 +128,11 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
         this.r2ControlPointView.center = CGPointMake(this.minWidth, this.r2ControlPointView.center.y);
         this.r3ControlPointView.center = CGPointMake(this.minWidth, this.r3ControlPointView.center.y);
       }, () => {
+        this.isPanning = false;
         this.animating = false;
         this.displayLink.paused = true;
         this.isOpen = !this.isOpen;
+        this.cd.detectChanges();
       });
     }
   }
@@ -151,19 +188,20 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   layoutControlPoints(baseWidth: number, waveHeight: number, locationY: number): void {
     // const width = this.nativeWidth;
     const height = this.height + 40;
+    locationY = locationY - 130;
     const minTopY = Math.min((locationY - height / 2) * 0.28, 0);
     const maxBottomY = Math.max(height + (locationY - height / 2) * 0.28);
 
-    const leftPartWidth = locationY - minTopY;
-    const rightPartWidth = maxBottomY - locationY;
+    const topPartWidth = locationY - minTopY;
+    const bottomPartWidth = maxBottomY - locationY;
 
     this.l3ControlPointView.center = CGPointMake(baseWidth, minTopY);
-    this.l2ControlPointView.center = CGPointMake(baseWidth, minTopY + leftPartWidth * 0.44);
-    this.l1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, minTopY + leftPartWidth * 0.71);
+    this.l2ControlPointView.center = CGPointMake(baseWidth, minTopY + topPartWidth * 0.44);
+    this.l1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, minTopY + topPartWidth * 0.71);
 
     this.cControlPointView.center = CGPointMake(baseWidth + waveHeight * 1.36, locationY);
-    this.r1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, maxBottomY - rightPartWidth * 0.71);
-    this.r2ControlPointView.center = CGPointMake(baseWidth, maxBottomY - (rightPartWidth * 0.44));
+    this.r1ControlPointView.center = CGPointMake(baseWidth + waveHeight * 0.64, maxBottomY - bottomPartWidth * 0.71);
+    this.r2ControlPointView.center = CGPointMake(baseWidth, maxBottomY - (bottomPartWidth * 0.44));
     this.r3ControlPointView.center = CGPointMake(baseWidth, maxBottomY);
   }
 
@@ -173,9 +211,9 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
 
   currentPath() {
     let bezierPath = UIBezierPath.bezierPath();
-    bezierPath.moveToPoint(CGPointMake(0, 0))
+    bezierPath.moveToPoint(CGPointMake(0, -30))
 
-    bezierPath.addLineToPoint(CGPointMake(this.getPosition(this.l3ControlPointView).x, 0));
+    bezierPath.addLineToPoint(CGPointMake(this.getPosition(this.l3ControlPointView).x, -30));
     bezierPath.addCurveToPointControlPoint1ControlPoint2(
       this.getPosition(this.l1ControlPointView),
       this.getPosition(this.l3ControlPointView),
@@ -201,4 +239,15 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   getPosition(args) {
     return this.animating && args.layer.presentationLayer() ? args.layer.presentationLayer().position : args.center;
   }
+
+  // ----------------------------------------------------------------------------------------------------------------
+
+  onScroll(args: any): void {
+    this.isScrolling = true;
+    setTimeout(() => {
+      this.isScrolling = false;
+    }, 300);
+  }
+
+
 }

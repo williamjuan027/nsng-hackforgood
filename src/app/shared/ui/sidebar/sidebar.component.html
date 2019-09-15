@@ -1,4 +1,45 @@
 <GridLayout>
-  <ng-content></ng-content>
-  <Placeholder (creatingView)="onCreatingView($event)" (pan)="onPan($event)"></Placeholder>
+  <!-- <ng-content></ng-content> -->
+  <GridLayout rows="*, 3*" (pan)="onPan($event)">
+    <GridLayout row="0" class="header" rows="*, auto, auto, auto" columns="*, auto">
+      <Label row="1" col="0" text="John Doe" class="lbl-name bold"></Label>
+      <Label row="2" col="0" text="ID: 1295321" class="lbl-id regular"></Label>
+      <Image row="1" rowSpan="2" col="1" src="~/app/assets/images/profile.png" class="img-profile"></Image>
+
+      <GridLayout row="4" col="0" colSpan="2" columns="*, *, 2*" rows="auto, auto" class="day-selector">
+        <Label row="0" col="0" text="Yesterday" class="semi-bold"></Label>
+        <Label row="0" col="1" text="Today" class="semi-bold"></Label>
+        <Image #arrow row="1" col="0" colSpan="2" src="~/app/assets/images/triangle.png"></Image>
+      </GridLayout>
+
+    </GridLayout>
+
+    <ScrollView row="1" orientation="vertical" (scroll)="onScroll($event)" [isScrollEnabled]="!isPanning && !isOpen">
+      <StackLayout class="body">
+        <Label text="Lorem Ipsum dea asdfnja asdlke djajksjk" class="content-head bold"></Label>
+        <Label text="Last Updated: 30 min" class="content-update regular"></Label>
+        <Label text=" " class="content-break"></Label>
+
+        <GridLayout class="content-card activity semi-bold" (tap)="navigateToActivity()">
+          <Label text="Physical Activity"></Label>
+        </GridLayout>
+        <GridLayout class="content-card diet semi-bold">
+          <Label text="Diet"></Label>
+        </GridLayout>
+        <GridLayout class="content-card medication semi-bold">
+          <Label text="Medication"></Label>
+        </GridLayout>
+
+      </StackLayout>
+    </ScrollView>
+
+  </GridLayout>
+
+  <Placeholder isUserInteractionEnabled="false" (creatingView)="onCreatingView($event)"></Placeholder>
+  <GridLayout *ngIf="isOpen && !isPanning" [@listAnimation] isUserInteractionEnabled="false" rows="*, *, *, *, *" columns="120">
+    <GridLayout *ngIf="true" row="0" col="0" backgroundColor="yellow"></GridLayout>
+    <GridLayout *ngIf="true" row="1" col="0" backgroundColor="blue"></GridLayout>
+    <GridLayout *ngIf="true" row="2" col="0" backgroundColor="green"></GridLayout>
+    <GridLayout *ngIf="true" row="3" col="0" backgroundColor="red"></GridLayout>
+  </GridLayout>
 </GridLayout>
